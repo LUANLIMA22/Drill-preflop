@@ -1,0 +1,11 @@
+{
+  "name": "Preflop Drill",
+  "short_name": "Preflop Drill",
+  "description": "Treino aleatório de poker preflop",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#10131b",
+  "theme_color": "#10131b"
+}
