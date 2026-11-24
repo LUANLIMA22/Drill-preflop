@@ -43,6 +43,30 @@ body{margin:0;background:#10131b;color:#f4f5f7;font-family:Arial,sans-serif;min-
 #game .feedback-text{font-size:12px}
 #game .next{padding:11px;margin-top:7px}
 @media(max-width:380px){.seat{min-width:50px;font-size:9px}.seat-cards{font-size:15px}.table-pot strong{font-size:16px}}
+
+/* V18 table refinement */
+.seat-utg{left:35%;top:87%}
+.seat-bb{left:65%;top:87%}
+.seat-hj{left:7%;top:57%}
+.seat-co{left:27%;top:15%}
+.seat-btn{left:73%;top:15%}
+.seat-sb{left:93%;top:57%}
+.table-scene{aspect-ratio:1.58;margin-bottom:7px}
+#game .spot-explain{padding:6px 8px;font-size:11px;line-height:1.25;margin:3px 0 5px}
+#game .details{font-size:10px;line-height:1.2;margin:2px 0}
+#game .table-spot{font-size:18px;margin-bottom:4px}
+#game .hand{font-size:34px;margin:5px 0 2px}
+#game .question{font-size:14px;margin:8px 0 5px}
+#game .actions{gap:6px}
+#game button.action{padding:10px 7px;font-size:12px}
+#game .feedback{padding:7px 9px;margin-top:6px}
+#game .next{padding:10px;margin-top:6px}
+@media(max-width:390px){
+ .seat{min-width:48px;max-width:70px}
+ .seat-cards{font-size:14px}
+ .seat-stack{font-size:8px}
+ .table-pot strong{font-size:15px}
+}
 </style>
 </head>
 <body>
@@ -165,16 +189,17 @@ function updateTableScene(){
  const seats=document.querySelectorAll("#tableScene .seat");
  seats.forEach(s=>{s.classList.remove("hero-seat","fish-seat");});
  const name=String(currentScenario?.name||"").toUpperCase();
- let hero=null, villain=null;
- if(trainingMode==="fish"){
-   // Fish chart spots encode Hero and target blind: e.g. BTN vs BB, CO vs SB.
-   const m=name.match(/(UTG|HJ|CO|BTN|SB|BB)\\s*(?:OOP|IP)?\\s*(?:VS|V)\\s*(UTG|HJ|CO|BTN|SB|BB)/);
-   if(m){hero=m[1];villain=m[2];}
-   else if(name.includes("SB VS BB")){hero="SB";villain="BB";}
- } else {
-   // GTO spot labels vary; use first recognized position as Hero and next as opponent.
-   const found=positionFromSpotName(name);hero=found[0]||"BTN";villain=found[1]||null;
+ const positions=["UTG","HJ","CO","BTN","SB","BB"];
+ const tokens=name.match(/\b(?:UTG|HJ|CO|BTN|SB|BB)\b/g)||[];
+ let hero=null,villain=null;
+ if(tokens.length){
+   hero=tokens[0];
+   // Labels like "SBv4B UTG" mean hero SB facing a 4bet from UTG.
+   // Conventional labels with "vs" also identify villain.
+   if(/\b(?:VS|V|4B|3B|SQZ|SQUEEZE)\b/.test(name) && tokens.length>1)
+     villain=tokens[tokens.length-1];
  }
+ if(trainingMode==="fish" && tokens.length>=2){hero=tokens[0];villain=tokens[tokens.length-1];}
  if(!hero)hero="BTN";
  const hs=document.querySelector(`#tableScene .seat[data-seat="${hero}"]`);
  if(hs)hs.classList.add("hero-seat");
