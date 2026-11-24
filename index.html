@@ -97,12 +97,14 @@ function fishWeightsForHand(spotName,hand){
  const chart=FISH_CHART.find(s=>s.name===spotName);const vals=chart?.hands?.[hand]||[100,0,0,0,0,0];
  // Categories from PDF colors: gray=Fold first action; blue=RFI/Fold vs 3Bet;
  // green=RFI/Call vs 3Bet; yellow=RFI/4Bet/Fold; purple=RFI/4Bet/Call; red=RFI/Jam.
- const fold0=vals[0], rfi=vals.slice(1).reduce((a,b)=>a+b,0);
- const responses={FOLD:vals[1],CALL:vals[2],FOURBET_FOLD:vals[3],FOURBET_CALL:vals[4],JAM:vals[5]};
+ const active=vals.map(Number),totalRaw=active.reduce((a,b)=>a+b,0);let snapped=active.map(()=>0);if(totalRaw>0){const q=active.map(v=>v/totalRaw*4),base=q.map(Math.floor);let left=4-base.reduce((a,b)=>a+b,0);const order=q.map((v,i)=>({i,frac:v-base[i]})).sort((a,b)=>b.frac-a.frac);for(let k=0;k<left;k++)base[order[k].i]++;snapped=base.map(v=>v*25);}
+ const fold0=snapped[0], rfi=snapped.slice(1).reduce((a,b)=>a+b,0);
+ const responses={FOLD:snapped[1],CALL:snapped[2],FOURBET_FOLD:snapped[3],FOURBET_CALL:snapped[4],JAM:snapped[5]};
  const responseTotal=Object.values(responses).reduce((a,b)=>a+b,0);
  if(responseTotal) for(const k in responses)responses[k]=responses[k]/responseTotal*100;
  return {rfiPct:rfi,responseWeights:responses,fold0Pct:fold0};
 }
+function displayQuarterPct(value){return Math.round(Number(value||0)/25)*25;}
 function drawRng(){return Math.floor(Math.random()*100)+1;}
 function pickWeighted(weights,rng){
  let cum=0;for(const [action,pct] of Object.entries(weights)){cum+=pct;if(rng<=cum+1e-8)return action;}
@@ -170,8 +172,8 @@ function answer(action){
  document.getElementById("feedbackTitle").textContent=isCorrect?"✓ DECISÃO CORRETA":"✗ DECISÃO INCORRETA";
  let freqMarkup="";
  if(trainingMode==="fish"){
-  const w=fishCategoryWeights.responseWeights;freqMarkup=`RFI: ${fishCategoryWeights.rfiPct.toFixed(0)}%<br>Vs 3Bet: Fold ${w.FOLD.toFixed(0)}% · Call ${w.CALL.toFixed(0)}% · 4Bet ${(w.FOURBET_FOLD+w.FOURBET_CALL).toFixed(0)}% · Jam ${w.JAM.toFixed(0)}%`;
- }else freqMarkup=currentScenario.actions.filter(a=>Number(currentHandStrategy[a]||0)>0).map(a=>`${a}: ${currentHandStrategy[a]}%`).join(" · ");
+  const w=fishCategoryWeights.responseWeights;freqMarkup=`RFI: ${displayQuarterPct(fishCategoryWeights.rfiPct)}%<br>Vs 3Bet: Fold ${displayQuarterPct(w.FOLD)}% · Call ${displayQuarterPct(w.CALL)}% · 4Bet ${displayQuarterPct(w.FOURBET_FOLD+w.FOURBET_CALL)}% · Jam ${displayQuarterPct(w.JAM)}%`;
+ }else freqMarkup=currentScenario.actions.filter(a=>Number(currentHandStrategy[a]||0)>0).map(a=>`${a}: ${displayQuarterPct(currentHandStrategy[a])}%`).join(" · ");
  document.getElementById("feedbackText").innerHTML=`Sua ação: <b>${action}</b><br>Decisão esperada pelo RNG/chart: <b>${expectedAction}</b><br>Etapa: <b>${stageDescription}</b><br>Spot: <b>${currentScenario.name}</b><br>Mão: <b>${currentHand}</b><br><br><b>Estratégia:</b><br>${freqMarkup}`;
  if(trainingMode==="fish"&&fishStage===0&&action==="RAISE"&&isCorrect){
   answered=false;fishStage=1;renderFishStage();document.getElementById("feedback").style.display="none";return;
