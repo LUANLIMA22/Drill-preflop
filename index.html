@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10131b">
+<title>Preflop Drill</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #10131b;
+  color: #f4f5f7;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  padding: 18px;
+}
+
+.header {
+  text-align: center;
+  padding: 15px 0 22px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  color: #9ba3b5;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: #1b202b;
+  border: 1px solid #2a3140;
+  border-radius: 12px;
+  padding: 14px 5px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 23px;
+  font-weight: bold;
+  color: #9c83ff;
+}
+
+.stat-label {
+  color: #929bad;
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.card {
+  background: #1b202b;
+  border: 1px solid #2a3140;
+  border-radius: 16px;
+  padding: 17px;
+  margin-bottom: 13px;
+}
+
+.profile {
+  display: inline-block;
+  border-radius: 20px;
+  padding: 7px 13px;
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.fish {
+  background: #593c18;
+  color: #ffcb73;
+}
+
+.reg {
+  background: #173f37;
+  color: #80e5c0;
+}
+
+.spot {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.details {
+  color: #9ba3b5;
+  font-size: 14px;
+}
+
+.hand {
+  text-align: center;
+  font-size: 52px;
+  font-weight: bold;
+  letter-spacing: 5px;
+  margin: 24px 0 10px;
+}
+
+.hand-label {
+  text-align: center;
+  color: #9ba3b5;
+  font-size: 12px;
+}
+
+.question {
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  margin: 22px 0 14px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 11px;
+  padding: 17px 10px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action {
+  background: #2a3140;
+  color: #fff;
+}
+
+.action:active {
+  transform: scale(.97);
+}
+
+.action:hover {
+  background: #394356;
+}
+
+.primary {
+  width: 100%;
+  background: #8064f5;
+  color: white;
+  margin-top: 12px;
+}
+
+.secondary {
+  width: 100%;
+  background: #252c39;
+  color: #dce1ea;
+  margin-top: 10px;
+}
+
+.feedback {
+  display: none;
+  border-radius: 13px;
+  padding: 16px;
+  margin-top: 15px;
+}
+
+.correct {
+  background: #173a30;
+  border: 1px solid #2c735a;
+}
+
+.incorrect {
+  background: #442525;
+  border: 1px solid #814444;
+}
+
+.feedback-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.feedback-text {
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.next {
+  display: none;
+  width: 100%;
+  background: #8064f5;
+  color: white;
+  margin-top: 13px;
+}
+
+.note {
+  color: #778195;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.5;
+  margin: 20px 5px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.start-screen {
+  text-align: center;
+  padding: 25px 10px;
+}
+
+.start-screen h2 {
+  margin-bottom: 8px;
+}
+
+.start-screen p {
+  color: #9ba3b5;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.frequency {
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.frequency button {
+  padding: 11px 4px;
+  background: #2a3140;
+  color: #fff;
+  font-size: 12px;
+}
+
+.frequency button.selected {
+  background: #8064f5;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <div class="logo">♠ PREFLOP DRILL</div>
+    <div class="subtitle">Treino aleatório de ranges · 6-Max</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number" id="hands">0</div>
+      <div class="stat-label">MÃOS</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number" id="accuracy">0%</div>
+      <div class="stat-label">ACERTO</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number" id="streak">0</div>
+      <div class="stat-label">SEGUIDAS</div>
+    </div>
+  </div>
+
+  <div id="startScreen" class="card start-screen">
+    <h2>Pronto para treinar?</h2>
+
+    <p>
+      Perfil, cenário e mão serão sorteados automaticamente.
+      Você não saberá qual spot vem na próxima rodada.
+    </p>
+
+    <button class="primary" onclick="startDrill()">
+      INICIAR TREINO
+    </button>
+  </div>
+
+  <div id="game" class="hidden">
+
+    <div class="card">
+
+      <div id="profile" class="profile"></div>
+
+      <div class="spot" id="spot"></div>
+
+      <div class="details" id="details"></div>
+
+      <div class="hand" id="hand"></div>
+
+      <div class="hand-label">SUA MÃO</div>
+
+      <div class="question">Qual sua decisão?</div>
+
+      <div class="actions" id="actions"></div>
+
+      <div id="feedback" class="feedback">
+
+        <div class="feedback-title" id="feedbackTitle"></div>
+
+        <div class="feedback-text" id="feedbackText"></div>
+
+      </div>
+
+      <button class="next" id="nextButton" onclick="nextHand()">
+        PRÓXIMA MÃO →
+      </button>
+
+    </div>
+
+  </div>
+
+  <button class="secondary" onclick="resetStats()">
+    ZERAR ESTATÍSTICAS
+  </button>
+
+  <div class="note">
+    Versão inicial demonstrativa.<br>
+    Estratégias provisórias serão substituídas pelas suas ranges reais
+    Vs Fish e Vs Reg.
+  </div>
+
+</div>
+
+<script>
+
+let totalHands = 0;
+let correctHands = 0;
+let streak = 0;
+
+let currentScenario;
+let currentHand;
+let currentProfile;
+let currentCorrectAction;
+let answered = false;
+
+const positions = ["UTG", "MP", "CO", "BTN", "SB", "BB"];
+
+/*
+Cenários demonstrativos.
+Posteriormente serão substituídos pelos spots existentes
+nas suas ranges reais.
+*/
+
+const scenarios = [
+
+  {
+    name: "UTG Open",
+    hero: "BTN",
+    villain: "UTG",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "MP Open",
+    hero: "CO",
+    villain: "MP",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "CO Open",
+    hero: "BTN",
+    villain: "CO",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "CO Open",
+    hero: "BB",
+    villain: "CO",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "BTN Open",
+    hero: "BB",
+    villain: "BTN",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "BTN Open",
+    hero: "SB",
+    villain: "BTN",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "SB Open",
+    hero: "BB",
+    villain: "SB",
+    type: "open",
+    actions: ["FOLD", "CALL", "3-BET"]
+  },
+
+  {
+    name: "UTG Open → 3-Bet",
+    hero: "CO",
+    villain: "UTG",
+    type: "vs3bet",
+    actions: ["FOLD", "CALL", "4-BET"]
+  },
+
+  {
+    name: "CO Open → 3-Bet",
+    hero: "BTN",
+    villain: "CO",
+    type: "vs3bet",
+    actions: ["FOLD", "CALL", "4-BET"]
+  },
+
+  {
+    name: "BTN Open → 3-Bet",
+    hero: "BB",
+    villain: "BTN",
+    type: "vs3bet",
+    actions: ["FOLD", "CALL", "4-BET"]
+  },
+
+  {
+    name: "BTN 3-Bet → 4-Bet",
+    hero: "BTN",
+    villain: "CO",
+    type: "vs4bet",
+    actions: ["FOLD", "CALL", "5-BET"]
+  }
+
+];
+
+const ranks = [
+  "A","K","Q","J","T","9","8","7","6","5","4","3","2"
+];
+
+function randomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function startDrill() {
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  nextHand();
+}
+
+function generateHand() {
+
+  let r1 = randomItem(ranks);
+  let r2 = randomItem(ranks);
+
+  while (r1 === r2) {
+    r2 = randomItem(ranks);
+  }
+
+  let suited = Math.random() < 0.5;
+
+  if (ranks.indexOf(r1) > ranks.indexOf(r2)) {
+    [r1, r2] = [r2, r1];
+  }
+
+  return r1 + r2 + (suited ? "s" : "o");
+}
+
+function generateCards(hand) {
+
+  const suits = ["♠","♥","♦","♣"];
+
+  let r1 = hand[0];
+  let r2 = hand[1];
+
+  let suit1 = randomItem(suits);
+  let suit2;
+
+  if (hand.endsWith("s")) {
+    suit2 = suit1;
+  } else {
+    do {
+      suit2 = randomItem(suits);
+    } while (suit2 === suit1);
+  }
+
+  return r1 + suit1 + " " + r2 + suit2;
+}
+
+/*
+ESTRATÉGIA PROVISÓRIA
+
+Esta função é apenas uma simulação para testar o funcionamento.
+Não representa uma solução GTO nem suas ranges.
+
+Depois conectaremos suas tabelas reais.
+*/
+
+function demoStrategy(hand, profile, scenario) {
+
+  let r1 = hand[0];
+  let r2 = hand[1];
+
+  let pair = r1 === r2;
+
+  let highCard = ["A","K","Q","J","T"].includes(r1);
+  let secondHigh = ["A","K","Q","J","T"].includes(r2);
+
+  let suited = hand.endsWith("s");
+
+  let strength = 0;
+
+  if (pair) strength += 5;
+
+  if (highCard) strength += 2;
+
+  if (secondHigh) strength += 1;
+
+  if (suited) strength += 1;
+
+  if (profile === "FISH") {
+    strength += 1;
+  }
+
+  if (scenario.type === "vs3bet") {
+    if (strength >= 6) return "4-BET";
+    if (strength >= 3) return "CALL";
+    return "FOLD";
+  }
+
+  if (scenario.type === "vs4bet") {
+    if (strength >= 7) return "5-BET";
+    if (strength >= 5) return "CALL";
+    return "FOLD";
+  }
+
+  if (strength >= 6) return "3-BET";
+
+  if (strength >= 3) return "CALL";
+
+  return "FOLD";
+}
+
+function nextHand() {
+
+  answered = false;
+
+  currentScenario = randomItem(scenarios);
+
+  currentProfile = Math.random() < 0.5 ? "FISH" : "REG";
+
+  currentHand = generateHand();
+
+  currentCorrectAction = demoStrategy(
+    currentHand,
+    currentProfile,
+    currentScenario
+  );
+
+  const profileElement = document.getElementById("profile");
+
+  profileElement.textContent =
+    currentProfile === "FISH" ? "🐟 VS FISH" : "🧠 VS REG";
+
+  profileElement.className =
+    "profile " + (currentProfile === "FISH" ? "fish" : "reg");
+
+  document.getElementById("spot").textContent =
+    currentScenario.name + " → " + currentScenario.hero;
+
+  document.getElementById("details").textContent =
+    "Você: " + currentScenario.hero +
+    " · Vilão: " + currentScenario.villain +
+    " · 100 BB";
+
+  document.getElementById("hand").textContent =
+    generateCards(currentHand);
+
+  document.getElementById("feedback").style.display = "none";
+
+  document.getElementById("nextButton").style.display = "none";
+
+  const actionsElement = document.getElementById("actions");
+
+  actionsElement.innerHTML = "";
+
+  currentScenario.actions.forEach(action => {
+
+    const button = document.createElement("button");
+
+    button.className = "action";
+
+    button.textContent = action;
+
+    button.onclick = () => answer(action);
+
+    actionsElement.appendChild(button);
+
+  });
+
+}
+
+function answer(action) {
+
+  if (answered) return;
+
+  answered = true;
+
+  totalHands++;
+
+  const isCorrect = action === currentCorrectAction;
+
+  if (isCorrect) {
+    correctHands++;
+    streak++;
+  } else {
+    streak = 0;
+  }
+
+  updateStats();
+
+  const feedback = document.getElementById("feedback");
+
+  feedback.style.display = "block";
+
+  feedback.className =
+    "feedback " + (isCorrect ? "correct" : "incorrect");
+
+  document.getElementById("feedbackTitle").textContent =
+    isCorrect ? "✓ CORRETO!" : "✗ INCORRETO";
+
+  document.getElementById("feedbackText").innerHTML =
+    "Sua ação: <b>" + action + "</b><br>" +
+    "Resposta demonstrativa: <b>" + currentCorrectAction + "</b><br>" +
+    "Perfil: <b>" + currentProfile + "</b><br>" +
+    "Spot: <b>" + currentScenario.name + " → " +
+    currentScenario.hero + "</b><br><br>" +
+    "<small>Estratégia provisória. A resposta será substituída " +
+    "pelas frequências das suas ranges importadas.</small>";
+
+  document.getElementById("nextButton").style.display = "block";
+
+  document.querySelectorAll(".action").forEach(button => {
+    button.disabled = true;
+    button.style.opacity = "0.5";
+  });
+
+}
+
+function updateStats() {
+
+  document.getElementById("hands").textContent = totalHands;
+
+  let percentage = totalHands > 0
+    ? Math.round(correctHands / totalHands * 100)
+    : 0;
+
+  document.getElementById("accuracy").textContent =
+    percentage + "%";
+
+  document.getElementById("streak").textContent = streak;
+
+}
+
+function resetStats() {
+
+  if (!confirm("Deseja zerar todas as estatísticas?")) return;
+
+  totalHands = 0;
+  correctHands = 0;
+  streak = 0;
+
+  updateStats();
+
+}
+
+</script>
+
+</body>
+</html>
