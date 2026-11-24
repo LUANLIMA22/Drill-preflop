@@ -136,22 +136,22 @@ function renderFishStage(){
   if(fishStage===0){
    const rfi=fishCategoryWeights.rfiPct;currentRng=(rfi>0&&rfi<100)?drawRng():null;
    fishExpected=currentRng===null?(rfi>=100?"RAISE":"FOLD"):(currentRng<=rfi?"RAISE":"FOLD");
-   actions=["RAISE","FOLD"];promptText="1ª decisão · RFI ou Fold";rngText=currentRng===null?(rfi>=100?"RFI 100%":"FOLD 100%"):`RNG: ${currentRng}`;
+   actions=["RAISE","FOLD"];promptText="1ª decisão · RFI ou Fold";rngText=currentRng!==null?`RNG: ${currentRng}`:"";
   }else if(fishStage===1){
    const w=fishCategoryWeights.responseWeights;const normalized={FOLD:w.FOLD,CALL:w.CALL,"4BET":w.FOURBET_FOLD+w.FOURBET_CALL,JAM:w.JAM};
    const positives=Object.entries(normalized).filter(([a,p])=>p>0);currentRng=positives.length>1?drawRng():null;
    fishExpected=currentRng===null?positives[0][0]:pickWeighted(normalized,currentRng);
-   actions=positives.map(([a])=>a);promptText="Fish 3Bet · Qual sua resposta?";
-   rngText=currentRng===null?`${fishExpected} 100%`:`RNG: ${currentRng}`;
+   actions=["FOLD","CALL","4BET","JAM"];promptText="Fish 3Bet · Qual sua resposta?";
+   rngText=currentRng!==null?`RNG: ${currentRng}`:"";
   }else{
    const w=fishCategoryWeights.responseWeights;const total=w.FOURBET_FOLD+w.FOURBET_CALL;
    const foldPct=total? w.FOURBET_FOLD/total*100:100,callPct=total? w.FOURBET_CALL/total*100:0;
    const both=foldPct>0&&callPct>0;currentRng=both?drawRng():null;
    fishExpected=currentRng===null?(callPct>0?"CALL":"FOLD"):(currentRng<=foldPct?"FOLD":"CALL");
-   actions=["FOLD","CALL"];promptText="Fish shovou após sua 4Bet · Fold ou Call?";rngText=currentRng===null?`${fishExpected} 100%`:`RNG: ${currentRng}`;
+   actions=["FOLD","CALL"];promptText="Fish shovou após sua 4Bet · Fold ou Call?";rngText=currentRng!==null?`RNG: ${currentRng}`:"";
   }
  }
- rngElement.textContent=rngText;rngElement.style.display="inline-block";
+ rngElement.textContent=rngText;rngElement.style.display=rngText?"inline-block":"none";
  document.querySelector(".question").textContent=promptText;
  actions.forEach(action=>{const button=document.createElement("button");button.className="action";button.textContent=action;button.onclick=()=>answer(action);actionsElement.appendChild(button);});
 }
