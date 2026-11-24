@@ -1,10 +1,11 @@
-const CACHE_NAME = "preflop-drill-v2";
+const CACHE_NAME = "preflop-drill-v3";
 
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./icon.svg"
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
@@ -30,16 +31,13 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-
   if (event.request.method !== "GET") return;
 
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
-
       if (cachedResponse) return cachedResponse;
 
       return fetch(event.request).then(response => {
-
         if (response && response.status === 200) {
           const copy = response.clone();
 
@@ -49,10 +47,7 @@ self.addEventListener("fetch", event => {
         }
 
         return response;
-
       }).catch(() => caches.match("./index.html"));
-
     })
   );
-
 });
