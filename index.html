@@ -67,6 +67,14 @@ body{margin:0;background:#10131b;color:#f4f5f7;font-family:Arial,sans-serif;min-
  .seat-stack{font-size:8px}
  .table-pot strong{font-size:15px}
 }
+
+/* V19 bet chips */
+.seat-bet{min-height:0;display:flex;justify-content:center;margin-top:2px;gap:3px;font-size:9px;color:#fff;line-height:1}
+.seat-bet:empty{display:none}
+.chip-stack{display:flex;align-items:center;gap:3px;background:#17202e;border:1px solid #53667d;border-radius:10px;padding:3px 5px;box-shadow:0 2px 5px #0009;white-space:nowrap}
+.chip-dot{width:10px;height:10px;border-radius:50%;display:inline-block;border:2px dashed #f0f0f0;background:#df4a4a}
+.seat.hero-seat .chip-dot{background:#4386f2}
+.seat.fish-seat .chip-dot{background:#f4b942}
 </style>
 </head>
 <body>
@@ -95,12 +103,12 @@ body{margin:0;background:#10131b;color:#f4f5f7;font-family:Arial,sans-serif;min-
   <ellipse cx="180" cy="115" rx="151" ry="82" fill="#075536" stroke="#0c8050" stroke-width="2"/>
   <ellipse cx="180" cy="115" rx="141" ry="73" fill="none" stroke="#20865b" stroke-width="1" opacity=".55"/>
  </svg>
- <div class="seat seat-utg" data-seat="UTG"><div class="seat-cards">🂠 🂠</div><div class="seat-name">UTG</div><div class="seat-stack">100 BB</div></div>
- <div class="seat seat-hj" data-seat="HJ"><div class="seat-cards">🂠 🂠</div><div class="seat-name">HJ</div><div class="seat-stack">100 BB</div></div>
- <div class="seat seat-co" data-seat="CO"><div class="seat-cards">🂠 🂠</div><div class="seat-name">CO</div><div class="seat-stack">100 BB</div></div>
- <div class="seat seat-btn" data-seat="BTN"><div class="seat-cards">🂠 🂠</div><div class="seat-name">BTN <span class="dealer-dot">D</span></div><div class="seat-stack">100 BB</div></div>
- <div class="seat seat-sb" data-seat="SB"><div class="seat-cards">🂠 🂠</div><div class="seat-name">SB</div><div class="seat-stack">0.5 BB</div></div>
- <div class="seat seat-bb" data-seat="BB"><div class="seat-cards">🂠 🂠</div><div class="seat-name">BB</div><div class="seat-stack">1 BB</div></div>
+ <div class="seat seat-utg" data-seat="UTG"><div class="seat-cards">🂠 🂠</div><div class="seat-name">UTG</div><div class="seat-stack">100 BB</div><div class="seat-bet" aria-hidden="true"></div></div>
+ <div class="seat seat-hj" data-seat="HJ"><div class="seat-cards">🂠 🂠</div><div class="seat-name">HJ</div><div class="seat-stack">100 BB</div><div class="seat-bet" aria-hidden="true"></div></div>
+ <div class="seat seat-co" data-seat="CO"><div class="seat-cards">🂠 🂠</div><div class="seat-name">CO</div><div class="seat-stack">100 BB</div><div class="seat-bet" aria-hidden="true"></div></div>
+ <div class="seat seat-btn" data-seat="BTN"><div class="seat-cards">🂠 🂠</div><div class="seat-name">BTN <span class="dealer-dot">D</span></div><div class="seat-stack">100 BB</div><div class="seat-bet" aria-hidden="true"></div></div>
+ <div class="seat seat-sb" data-seat="SB"><div class="seat-cards">🂠 🂠</div><div class="seat-name">SB</div><div class="seat-stack">0.5 BB</div><div class="seat-bet" aria-hidden="true"></div></div>
+ <div class="seat seat-bb" data-seat="BB"><div class="seat-cards">🂠 🂠</div><div class="seat-name">BB</div><div class="seat-stack">1 BB</div><div class="seat-bet" aria-hidden="true"></div></div>
  <div class="table-pot"><div id="potLabel">POT</div><strong id="potAmount">1.5 BB</strong><div class="board-cards">□ □ □ □ □</div></div>
 </div>
 <div class="spot table-spot" id="spot"></div><div class="spot-explain" id="spotExplain"></div><div class="details" id="details"></div>
@@ -185,27 +193,35 @@ function positionFromSpotName(name){
  const found=pos.filter(p=>new RegExp("\\b"+p+"\\b").test(upper));
  return found;
 }
+function setSeatBet(position,label,chipColor){
+ const seat=document.querySelector(`#tableScene .seat[data-seat="${position}"]`);
+ if(!seat)return;
+ const box=seat.querySelector(".seat-bet");if(!box)return;
+ box.innerHTML="";
+ if(!label)return;
+ const stack=document.createElement("span");stack.className="chip-stack";
+ const dot=document.createElement("span");dot.className="chip-dot";if(chipColor)dot.style.background=chipColor;
+ stack.appendChild(dot);stack.appendChild(document.createTextNode(label));box.appendChild(stack);
+}
+function clearSeatBets(){document.querySelectorAll("#tableScene .seat-bet").forEach(x=>x.innerHTML="");}
 function updateTableScene(){
  const seats=document.querySelectorAll("#tableScene .seat");
  seats.forEach(s=>{s.classList.remove("hero-seat","fish-seat");});
+ clearSeatBets();
  const name=String(currentScenario?.name||"").toUpperCase();
- const positions=["UTG","HJ","CO","BTN","SB","BB"];
  const tokens=name.match(/\b(?:UTG|HJ|CO|BTN|SB|BB)\b/g)||[];
- let hero=null,villain=null;
- if(tokens.length){
-   hero=tokens[0];
-   // Labels like "SBv4B UTG" mean hero SB facing a 4bet from UTG.
-   // Conventional labels with "vs" also identify villain.
-   if(/\b(?:VS|V|4B|3B|SQZ|SQUEEZE)\b/.test(name) && tokens.length>1)
-     villain=tokens[tokens.length-1];
- }
- if(trainingMode==="fish" && tokens.length>=2){hero=tokens[0];villain=tokens[tokens.length-1];}
- if(!hero)hero="BTN";
+ let hero=tokens[0]||"BTN",villain=null;
+ if(tokens.length>1 && /\b(?:VS|V|4B|3B|SQZ|SQUEEZE)\b/.test(name))villain=tokens[tokens.length-1];
+ if(trainingMode==="fish"&&tokens.length>=2){hero=tokens[0];villain=tokens[tokens.length-1];}
  const hs=document.querySelector(`#tableScene .seat[data-seat="${hero}"]`);
  if(hs)hs.classList.add("hero-seat");
  if(villain){const vs=document.querySelector(`#tableScene .seat[data-seat="${villain}"]`);if(vs&&vs!==hs)vs.classList.add("fish-seat");}
- const potText=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"5 BB":"20 BB"):"1.5 BB";
- document.getElementById("potAmount").textContent=potText;
+ // Illustrative chip placements to visually represent the action sequence.
+ if(trainingMode==="fish" && villain){
+  if(fishStage>=1){setSeatBet(hero,"Open 2.3 BB","#4386f2");setSeatBet(villain,"3Bet 7 BB","#f4b942");}
+  if(fishStage>=2){setSeatBet(hero,"4Bet 18 BB","#4386f2");setSeatBet(villain,"All-in","#f4b942");}
+ }
+ document.getElementById("potAmount").textContent=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"10 BB":"100 BB"):"1.5 BB";
  document.getElementById("potLabel").textContent=trainingMode==="fish"?(fishStage===0?"BLINDS":"ACTION"):"POT";
 }
 
@@ -232,7 +248,7 @@ function renderFishStage(){
  if(trainingMode!=="fish"){
   const pos=currentScenario.actions.filter(a=>Number(currentHandStrategy[a]||0)>0);const mixed=pos.length>1;
   currentRng=mixed?drawRng():null;let cum=0;for(const a of currentScenario.actions){cum+=Number(currentHandStrategy[a]||0);if(currentRng!==null&&currentRng<=cum){currentRngAction=a;break;}}
-  actions=currentScenario.actions;promptText="Qual sua decisão?";rngText=mixed?`RNG: ${currentRng}`:"Mão pura";
+  actions=currentScenario.actions;promptText="Qual sua decisão?";rngText=mixed?`RNG: ${currentRng}`:"";
  }else{
   fishCategoryWeights=fishWeightsForHand(currentScenario.name,currentHand);
   if(fishStage===0){
@@ -268,6 +284,7 @@ function answer(action){
   const positive=currentScenario.actions.filter(a=>Number(currentHandStrategy[a]||0)>0);expectedAction=currentRng===null?positive[0]:currentRngAction;stageDescription="GTO";
  }
  const isCorrect=action===expectedAction;if(isCorrect){correctHands++;streak++;}else{streak=0;}
+ if(trainingMode==="fish"&&fishStage===0&&action==="RAISE"){fishStage=1;updateTableScene();fishStage=0;}
  saveStats();updateStats();
  const feedback=document.getElementById("feedback");feedback.style.display="block";feedback.className="feedback "+(isCorrect?"correct":"incorrect");
  document.getElementById("feedbackTitle").textContent=isCorrect?"✓ DECISÃO CORRETA":"✗ DECISÃO INCORRETA";
