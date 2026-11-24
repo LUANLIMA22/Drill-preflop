@@ -75,6 +75,19 @@ body{margin:0;background:#10131b;color:#f4f5f7;font-family:Arial,sans-serif;min-
 .chip-dot{width:10px;height:10px;border-radius:50%;display:inline-block;border:2px dashed #f0f0f0;background:#df4a4a}
 .seat.hero-seat .chip-dot{background:#4386f2}
 .seat.fish-seat .chip-dot{background:#f4b942}
+
+/* V20: bet labels/chips on felt, inward from each player */
+.seat{position:absolute}
+.seat-bet{position:absolute;display:flex;justify-content:center;min-height:0;margin:0;gap:0;z-index:4;pointer-events:none}
+.seat-bet:empty{display:none}
+.seat-utg .seat-bet,.seat-bb .seat-bet{left:50%;bottom:calc(100% + 2px);transform:translateX(-50%)}
+.seat-hj .seat-bet{left:calc(100% + 2px);top:50%;transform:translateY(-50%)}
+.seat-co .seat-bet,.seat-btn .seat-bet{left:50%;top:calc(100% + 2px);transform:translateX(-50%)}
+.seat-sb .seat-bet{right:calc(100% + 2px);top:50%;transform:translateY(-50%)}
+.chip-stack{display:flex;align-items:center;gap:4px;background:#101a2aee;border:1px solid #70819a;border-radius:14px;padding:4px 6px;box-shadow:0 2px 6px #000a;white-space:nowrap;font-size:10px;font-weight:700;color:#fff}
+.chip-dot{width:11px;height:11px;border-radius:50%;display:inline-block;border:2px dashed #fff;background:#df4a4a;flex-shrink:0}
+.seat.hero-seat .chip-dot{background:#4386f2}
+.seat.fish-seat .chip-dot{background:#f4b942}
 </style>
 </head>
 <body>
@@ -218,8 +231,8 @@ function updateTableScene(){
  if(villain){const vs=document.querySelector(`#tableScene .seat[data-seat="${villain}"]`);if(vs&&vs!==hs)vs.classList.add("fish-seat");}
  // Illustrative chip placements to visually represent the action sequence.
  if(trainingMode==="fish" && villain){
-  if(fishStage>=1){setSeatBet(hero,"Open 2.3 BB","#4386f2");setSeatBet(villain,"3Bet 7 BB","#f4b942");}
-  if(fishStage>=2){setSeatBet(hero,"4Bet 18 BB","#4386f2");setSeatBet(villain,"All-in","#f4b942");}
+  if(fishStage>=1){setSeatBet(hero,"2.3 BB","#4386f2");setSeatBet(villain,"7 BB","#f4b942");}
+  if(fishStage>=2){setSeatBet(hero,"18 BB","#4386f2");setSeatBet(villain,"ALL-IN","#f4b942");}
  }
  document.getElementById("potAmount").textContent=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"10 BB":"100 BB"):"1.5 BB";
  document.getElementById("potLabel").textContent=trainingMode==="fish"?(fishStage===0?"BLINDS":"ACTION"):"POT";
