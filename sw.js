@@ -1,4 +1,4 @@
-const CACHE_NAME = "preflop-drill-v4-ranges";
+const CACHE_NAME = "preflop-drill-v5-spot-explainer";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
