@@ -14,6 +14,35 @@ body{margin:0;background:#10131b;color:#f4f5f7;font-family:Arial,sans-serif;min-
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}.stat{background:#1b202b;border:1px solid #2a3140;border-radius:12px;padding:14px 5px;text-align:center}.stat-number{font-size:23px;font-weight:bold;color:#9c83ff}.stat-label{color:#929bad;font-size:11px;margin-top:5px}
 .card{background:#1b202b;border:1px solid #2a3140;border-radius:16px;padding:17px;margin-bottom:13px}.spot{font-size:23px;font-weight:bold;margin-bottom:8px;line-height:1.3}.spot-explain{background:#252c39;border:1px solid #353e50;border-radius:11px;padding:12px;margin:10px 0 14px;line-height:1.55;font-size:14px}.spot-explain strong{color:#c1b3ff}.spot-explain .muted{color:#9ba3b5;font-size:12px;margin-top:4px}.details{color:#9ba3b5;font-size:14px;line-height:1.5}.hand{text-align:center;font-size:44px;font-weight:bold;letter-spacing:5px;margin:24px 0 10px}.hand-label{text-align:center;color:#9ba3b5;font-size:12px}.rng-display{display:inline-block;text-align:center;background:#252c39;border:1px solid #353e50;border-radius:10px;padding:7px 15px;font-size:20px;font-weight:bold;color:#a78bfa;margin:0 auto 8px;min-width:100px}.rng-wrap{text-align:center;margin:0 0 6px}.question{text-align:center;font-size:17px;font-weight:bold;margin:22px 0 14px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}button{border:none;border-radius:11px;padding:16px 10px;font-size:15px;font-weight:bold;cursor:pointer}.action{background:#2a3140;color:#fff}.action:active{transform:scale(.97)}.action:hover{background:#394356}.primary{width:100%;background:#8064f5;color:white;margin-top:12px}.secondary{width:100%;background:#252c39;color:#dce1ea;margin-top:10px}.feedback{display:none;border-radius:11px;padding:10px 12px;margin-top:10px}.correct{background:#173a30;border:1px solid #2c735a}.incorrect{background:#442525;border:1px solid #814444}.feedback-title{font-size:16px;font-weight:bold;margin-bottom:4px}.feedback-text{line-height:1.35;font-size:13px}.feedback-text details{margin-top:6px}.feedback-text summary{cursor:pointer;color:#c1b3ff;font-size:12px}.feedback-text .strategy-details{font-size:12px;line-height:1.4;margin-top:4px}.next{display:none;width:100%;background:#8064f5;color:white;margin-top:8px;padding:12px}.note{color:#778195;font-size:11px;text-align:center;line-height:1.5;margin:20px 5px}.hidden{display:none!important}.start-screen{text-align:center;padding:25px 10px}.start-screen h2{margin-bottom:8px}.start-screen p{color:#9ba3b5;line-height:1.6;font-size:14px}.install-button{display:none;width:100%;background:#21a179;color:white;margin-top:10px}.loading{color:#e7c66a;font-size:14px;line-height:1.5}.freq-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.freq-chip{background:#252c39;padding:6px 9px;border-radius:8px;font-size:12px}
+
+.table-scene{position:relative;width:100%;aspect-ratio:1.52;margin:2px auto 12px;max-width:480px;overflow:visible}
+.felt-svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 6px 10px #0008)}
+.seat{position:absolute;z-index:2;width:22%;min-width:58px;max-width:86px;text-align:center;transform:translate(-50%,-50%);font-size:10px;color:#f4f5f7}
+.seat-utg{left:50%;top:91%}.seat-hj{left:9%;top:61%}.seat-co{left:23%;top:12%}.seat-btn{left:77%;top:12%}.seat-sb{left:91%;top:61%}.seat-bb{left:50%;top:91%}
+.seat-cards{font-size:17px;line-height:1.15;color:#8cb2ff;text-shadow:0 1px 3px #000;white-space:nowrap}
+.seat-name{background:#182234;border:1px solid #3a4a65;border-radius:7px;padding:4px 2px;font-weight:700;box-shadow:0 2px 5px #0008}
+.seat-stack{font-size:9px;color:#c4cbd6;margin-top:2px}
+.seat.hero-seat .seat-name{background:#174ba8;border-color:#58a1ff;color:#fff;box-shadow:0 0 0 2px #4d91ff55}
+.seat.fish-seat .seat-name{border-color:#ffb54a;color:#ffe2a6}
+.seat.hero-seat .seat-cards{display:none}
+.dealer-dot{display:inline-block;background:#eee;color:#333;border-radius:50%;font-size:8px;padding:1px 3px;margin-left:2px}
+.table-pot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1;color:#e5f4eb;text-align:center;font-size:11px;text-shadow:0 1px 2px #000}
+.table-pot strong{display:block;font-size:18px;margin-top:3px}
+.board-cards{font-size:16px;letter-spacing:2px;color:#9fc4b1;margin-top:7px}
+.table-spot{font-size:15px;margin:0 0 6px}
+#game .card{padding:12px}
+#game .spot-explain{padding:8px 10px;font-size:12px;line-height:1.35;margin:5px 0 8px}
+#game .details{font-size:11px;line-height:1.25;margin:3px 0}
+#game .hand{font-size:38px;margin:5px 0 2px;letter-spacing:3px}
+#game .hand-label{font-size:10px}
+#game .question{font-size:15px;margin:12px 0 8px}
+#game .actions{gap:7px}
+#game button.action{padding:12px 8px;font-size:13px;border-radius:8px}
+#game .feedback{margin-top:7px;padding:8px 10px}
+#game .feedback-title{font-size:14px}
+#game .feedback-text{font-size:12px}
+#game .next{padding:11px;margin-top:7px}
+@media(max-width:380px){.seat{min-width:50px;font-size:9px}.seat-cards{font-size:15px}.table-pot strong{font-size:16px}}
 </style>
 </head>
 <body>
@@ -35,7 +64,22 @@ body{margin:0;background:#10131b;color:#f4f5f7;font-family:Arial,sans-serif;min-
 <button class="install-button" id="installButton">📲 INSTALAR APP</button>
 </div>
 <div id="game" class="hidden"><div class="card">
-<div class="spot" id="spot"></div><div class="spot-explain" id="spotExplain"></div><div class="details" id="details"></div>
+
+<div class="table-scene" id="tableScene" aria-label="Mesa 6-max de treino">
+ <svg class="felt-svg" viewBox="0 0 360 230" aria-hidden="true">
+  <ellipse cx="180" cy="115" rx="164" ry="92" fill="#071b2d" stroke="#253c79" stroke-width="11"/>
+  <ellipse cx="180" cy="115" rx="151" ry="82" fill="#075536" stroke="#0c8050" stroke-width="2"/>
+  <ellipse cx="180" cy="115" rx="141" ry="73" fill="none" stroke="#20865b" stroke-width="1" opacity=".55"/>
+ </svg>
+ <div class="seat seat-utg" data-seat="UTG"><div class="seat-cards">🂠 🂠</div><div class="seat-name">UTG</div><div class="seat-stack">100 BB</div></div>
+ <div class="seat seat-hj" data-seat="HJ"><div class="seat-cards">🂠 🂠</div><div class="seat-name">HJ</div><div class="seat-stack">100 BB</div></div>
+ <div class="seat seat-co" data-seat="CO"><div class="seat-cards">🂠 🂠</div><div class="seat-name">CO</div><div class="seat-stack">100 BB</div></div>
+ <div class="seat seat-btn" data-seat="BTN"><div class="seat-cards">🂠 🂠</div><div class="seat-name">BTN <span class="dealer-dot">D</span></div><div class="seat-stack">100 BB</div></div>
+ <div class="seat seat-sb" data-seat="SB"><div class="seat-cards">🂠 🂠</div><div class="seat-name">SB</div><div class="seat-stack">0.5 BB</div></div>
+ <div class="seat seat-bb" data-seat="BB"><div class="seat-cards">🂠 🂠</div><div class="seat-name">BB</div><div class="seat-stack">1 BB</div></div>
+ <div class="table-pot"><div id="potLabel">POT</div><strong id="potAmount">1.5 BB</strong><div class="board-cards">□ □ □ □ □</div></div>
+</div>
+<div class="spot table-spot" id="spot"></div><div class="spot-explain" id="spotExplain"></div><div class="details" id="details"></div>
 <div class="hand" id="hand"></div><div class="rng-display" id="rngDisplay"></div><div class="hand-label">SUA MÃO</div>
 <div class="question">Qual sua decisão?</div><div class="actions" id="actions"></div>
 <div id="feedback" class="feedback"><div class="feedback-title" id="feedbackTitle"></div><div class="feedback-text" id="feedbackText"></div></div>
@@ -110,6 +154,36 @@ function pickWeighted(weights,rng){
  let cum=0;for(const [action,pct] of Object.entries(weights)){cum+=pct;if(rng<=cum+1e-8)return action;}
  return Object.keys(weights).filter(k=>weights[k]>0).pop()||"FOLD";
 }
+
+function positionFromSpotName(name){
+ const upper=String(name||"").toUpperCase();
+ const pos=["UTG","HJ","CO","BTN","SB","BB"];
+ const found=pos.filter(p=>new RegExp("\\b"+p+"\\b").test(upper));
+ return found;
+}
+function updateTableScene(){
+ const seats=document.querySelectorAll("#tableScene .seat");
+ seats.forEach(s=>{s.classList.remove("hero-seat","fish-seat");});
+ const name=String(currentScenario?.name||"").toUpperCase();
+ let hero=null, villain=null;
+ if(trainingMode==="fish"){
+   // Fish chart spots encode Hero and target blind: e.g. BTN vs BB, CO vs SB.
+   const m=name.match(/(UTG|HJ|CO|BTN|SB|BB)\\s*(?:OOP|IP)?\\s*(?:VS|V)\\s*(UTG|HJ|CO|BTN|SB|BB)/);
+   if(m){hero=m[1];villain=m[2];}
+   else if(name.includes("SB VS BB")){hero="SB";villain="BB";}
+ } else {
+   // GTO spot labels vary; use first recognized position as Hero and next as opponent.
+   const found=positionFromSpotName(name);hero=found[0]||"BTN";villain=found[1]||null;
+ }
+ if(!hero)hero="BTN";
+ const hs=document.querySelector(`#tableScene .seat[data-seat="${hero}"]`);
+ if(hs)hs.classList.add("hero-seat");
+ if(villain){const vs=document.querySelector(`#tableScene .seat[data-seat="${villain}"]`);if(vs&&vs!==hs)vs.classList.add("fish-seat");}
+ const potText=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"5 BB":"20 BB"):"1.5 BB";
+ document.getElementById("potAmount").textContent=potText;
+ document.getElementById("potLabel").textContent=trainingMode==="fish"?(fishStage===0?"BLINDS":"ACTION"):"POT";
+}
+
 function nextHand(){
  answered=false;currentRng=null;currentRngAction=null;fishStage=0;fishCategoryWeights=null;fishExpected=null;
  let availableSpots=trainingMode==="fish"?FISH_RFI:window.PREFLOP_RANGES.spots.filter(s=>s.hands&&Object.keys(s.hands).length&&isSimpleSpot(s.name));
@@ -122,6 +196,7 @@ function nextHand(){
  document.getElementById("spotExplain").innerHTML=`<strong>${info.hero}</strong><br>${info.desc}<div class="muted">Modo: ${trainingMode==="fish"?"Vs Fish · Chart 1st Act":"GTO"}</div>`;
  document.getElementById("details").textContent=trainingMode==="fish"?"Chart original · 1st Act + respostas à 3Bet e shove":`Mãos classificadas neste spot · Ações disponíveis para o spot`;
  document.getElementById("hand").textContent=generateCards(currentHand);
+ updateTableScene();
  renderFishStage();
  document.getElementById("feedback").style.display="none";
 }
@@ -155,6 +230,7 @@ function renderFishStage(){
  }
  rngElement.textContent=rngText;rngElement.style.display=rngText?"inline-block":"none";
  document.querySelector(".question").textContent=promptText;
+ updateTableScene();
  actions.forEach(action=>{const button=document.createElement("button");button.className="action";button.textContent=action;button.onclick=()=>answer(action);actionsElement.appendChild(button);});
 }
 function answer(action){
