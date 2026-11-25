@@ -221,34 +221,40 @@ function updateTableScene(){
  const seats=document.querySelectorAll("#tableScene .seat");
  seats.forEach(s=>{s.classList.remove("hero-seat","fish-seat");});
  clearSeatBets();
- const name=String(currentScenario?.name||"").toUpperCase();
- const tokens=name.match(/\b(?:UTG|HJ|CO|BTN|SB|BB)\b/g)||[];
- let hero=tokens[0]||"BTN",villain=tokens.length>1?tokens[tokens.length-1]:null;
- if(trainingMode==="fish"&&tokens.length>=2){hero=tokens[0];villain=tokens[tokens.length-1];}
- const hs=document.querySelector(`#tableScene .seat[data-seat="${hero}"]`);
- if(hs)hs.classList.add("hero-seat");
- if(villain){const vs=document.querySelector(`#tableScene .seat[data-seat="${villain}"]`);if(vs&&vs!==hs)vs.classList.add("fish-seat");}
- if(trainingMode==="fish" && villain){
-  if(fishStage>=1){setSeatBet(hero,"2.3 BB","#4386f2");setSeatBet(villain,"7 BB","#f4b942");}
-  if(fishStage>=2){setSeatBet(hero,"18 BB","#4386f2");setSeatBet(villain,"ALL-IN","#f4b942");}
- }else if(trainingMode==="gto"){
-   // Display the prior action in the spot, not the user's yet-to-be-selected action.
-   // Labels in the imported chart identify Hero first and opponent second.
-   const isRfi=/^RFI\b/.test(name);
-   const facing3bet=/\bv3B\b|v3B|v3BET/.test(name);
-   const facing4bet=/\bv4B\b|v4B|v4BET/.test(name);
-   const facingJam=/\bvJAM\b|vJAM|vALL.?IN/.test(name);
-   const is3betSpot=/^3B\b/.test(name);
-   const isFacingOpen=/^BBv|^SBv|^HJv|^COv|^BTNv/.test(name)&&!facing3bet&&!facing4bet&&!facingJam;
-   if(!isRfi && villain){
-     if(facingJam){setSeatBet(villain,"ALL-IN","#f4b942");}
-     else if(facing4bet){setSeatBet(villain,"18 BB","#f4b942");setSeatBet(hero,"7 BB","#4386f2");}
-     else if(facing3bet){setSeatBet(villain,"7 BB","#f4b942");setSeatBet(hero,"2.5 BB","#4386f2");}
-     else if(is3betSpot){setSeatBet(villain,"2.5 BB","#f4b942");}
-     else if(isFacingOpen){setSeatBet(villain,"2.5 BB","#f4b942");}
-     else {setSeatBet(villain,"2.5 BB","#f4b942");}
+ const raw=String(currentScenario?.name||"").trim();
+ const name=raw.toUpperCase();
+ const posMap={MP:"HJ"};
+ const mapPos=p=>posMap[p]||p;
+ let hero=null,opponent=null,heroBet=null,oppBet=null;
+ if(trainingMode==="fish"){
+   const tokens=name.match(/\b(?:UTG|HJ|CO|BTN|SB|BB)\b/g)||[];
+   hero=tokens[0]||"BTN";opponent=tokens.length>1?tokens[tokens.length-1]:null;
+   if(fishStage>=1){heroBet="2.3 BB";oppBet="7 BB";}
+   if(fishStage>=2){heroBet="18 BB";oppBet="ALL-IN";}
+ }else{
+   // Parse imported GTO spot labels: RFI, 3Bet, BB-v-open, vs 3Bet, vs 4Bet and vs JAM.
+   let m;
+   if((m=name.match(/^RFI\s+(UTG|MP|CO|BTN|SB)\b/))){
+     hero=m[1];heroBet="2.3 BB";
+   }else if((m=name.match(/^3B\s+(HJ|CO|BTN|SB|MP)v(UTG|HJ|CO|BTN|MP)\b/))){
+     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="2.3 BB";
+   }else if((m=name.match(/^(BB|SB|HJ|CO|BTN|MP)v(UTG|HJ|CO|BTN|MP)\b/))){
+     hero=m[1];opponent=m[2];oppBet="2.3 BB";
+   }else if((m=name.match(/^(UTG|MP|CO|BTN|SB|HJ)v3B\s+(HJ|CO|BTN|SB|BB)\b/))){
+     hero=m[1];opponent=m[2];heroBet="2.3 BB";oppBet="7 BB";
+   }else if((m=name.match(/^(HJ|CO|BTN|SB|BB)v4B\s+(UTG|HJ|CO|BTN|SB|MP)\b/))){
+     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="18 BB";
+   }else if((m=name.match(/^(UTG|HJ|CO|BTN|SB)vJAM\s+(HJ|CO|BTN|SB|BB)\b/))){
+     hero=m[1];opponent=m[2];heroBet="2.3 BB";oppBet="ALL-IN";
    }
  }
+ hero=hero?mapPos(hero):null;opponent=opponent?mapPos(opponent):null;
+ const hs=hero?document.querySelector(`#tableScene .seat[data-seat="${hero}"]`):null;
+ if(hs)hs.classList.add("hero-seat");
+ const vs=opponent?document.querySelector(`#tableScene .seat[data-seat="${opponent}"]`):null;
+ if(vs&&vs!==hs)vs.classList.add(trainingMode==="fish"?"fish-seat":"fish-seat");
+ if(heroBet&&hero)setSeatBet(hero,heroBet,"#4386f2");
+ if(oppBet&&opponent)setSeatBet(opponent,oppBet,"#f4b942");
  document.getElementById("potAmount").textContent=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"10 BB":"100 BB"):"1.5 BB";
  document.getElementById("potLabel").textContent=trainingMode==="fish"?(fishStage===0?"BLINDS":"ACTION"):"POT";
 }
