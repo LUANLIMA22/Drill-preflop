@@ -222,33 +222,33 @@ function updateTableScene(){
  seats.forEach(s=>{s.classList.remove("hero-seat","fish-seat");});
  clearSeatBets();
  const name=String(currentScenario?.name||"").trim().toUpperCase();
+ let hero=null,opponent=null,heroBet=null,oppBet=null;
  const mapPos=p=>p==="MP"?"HJ":p;
- let hero=null,opponent=null,heroBet=null,oppBet=null,pot="1.5 BB",potLabel="POT";
  if(trainingMode==="fish"){
    const tokens=name.match(/\b(?:UTG|HJ|CO|BTN|SB|BB)\b/g)||[];
    hero=tokens[0]||"BTN";opponent=tokens.length>1?tokens[tokens.length-1]:null;
-   if(fishStage>=1){heroBet="2.3 BB";oppBet="7 BB";pot="10 BB";potLabel="ACTION";}
-   if(fishStage>=2){heroBet="18 BB";oppBet="ALL-IN";pot="100 BB";potLabel="ACTION";}
- }else{
+   if(fishStage>=1){heroBet="2.3 BB";oppBet="7 BB";}
+   if(fishStage>=2){heroBet="18 BB";oppBet="ALL-IN";}
+ } else if(trainingMode==="gto"){
    let m;
-   // RFI: hero opens; no prior opponent raise.
+   // Names are normalized to uppercase; match using uppercase V and labels.
    if((m=name.match(/^RFI\s+(UTG|MP|CO|BTN|SB)\b/))){
-     hero=m[1];heroBet="2.3 BB";pot="3.8 BB";
-   // 3Bet chart: Hero is the 3-bettor, opponent opened first.
-   }else if((m=name.match(/^3B\s+(HJ|CO|BTN|SB|MP)v(UTG|HJ|CO|BTN|MP)\b/))){
-     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="2.3 BB";pot="9.8 BB";
-   // Defend vs open: Hero faces an open.
-   }else if((m=name.match(/^(BB|SB|HJ|CO|BTN|MP)v(UTG|HJ|CO|BTN|MP|SB)\b/))){
-     hero=m[1];opponent=m[2];oppBet="2.3 BB";pot="3.8 BB";
-   // Hero opened, opponent 3-bet: Hero decision.
-   }else if((m=name.match(/^(UTG|MP|CO|BTN|SB|HJ)v3B\s+(HJ|CO|BTN|SB|BB|MP)\b/))){
-     hero=m[1];opponent=m[2];heroBet="2.3 BB";oppBet="7 BB";pot="10.5 BB";
-   // Hero 3-bet, opponent 4-bet.
-   }else if((m=name.match(/^(HJ|CO|BTN|SB|BB|MP)v4B\s+(UTG|HJ|CO|BTN|SB|MP)\b/))){
-     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="18 BB";pot="26.5 BB";
-   // Hero 4-bet, opponent jams. Hero faces shove/call-or-fold.
-   }else if((m=name.match(/^(UTG|MP|HJ|CO|BTN|SB|BB)vJAM\s+(UTG|HJ|CO|BTN|SB|BB|MP)\b/))){
-     hero=m[1];opponent=m[2];heroBet="18 BB";oppBet="ALL-IN";pot="~119.5 BB";potLabel="ALL-IN POT";
+     hero=m[1];heroBet=null; // no opponent action in an RFI spot
+   } else if((m=name.match(/^3B\s+(HJ|CO|BTN|SB|MP)V(UTG|HJ|CO|BTN|MP)\b/))){
+     // Hero 3-bet; opponent was opener.
+     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="2.3 BB";
+   } else if((m=name.match(/^(BB|SB|HJ|CO|BTN|MP)V(UTG|HJ|CO|BTN|MP|SB)\b/))){
+     // Hero is defending vs an open raise.
+     hero=m[1];opponent=m[2];oppBet="2.3 BB";
+   } else if((m=name.match(/^(UTG|MP|HJ|CO|BTN|SB|BB)V3B\s+(HJ|CO|BTN|SB|BB|MP)\b/))){
+     // Hero opened and is facing a 3-bet.
+     hero=m[1];opponent=m[2];heroBet="2.3 BB";oppBet="7 BB";
+   } else if((m=name.match(/^(HJ|CO|BTN|SB|BB|MP)V4B\s+(UTG|HJ|CO|BTN|SB|MP)\b/))){
+     // Hero 3-bet and faces opponent's 4-bet.
+     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="18 BB";
+   } else if((m=name.match(/^(UTG|MP|HJ|CO|BTN|SB|BB)VJAM\s+(UTG|HJ|CO|BTN|SB|BB|MP)\b/))){
+     // Hero 4-bet and faces opponent's jam.
+     hero=m[1];opponent=m[2];heroBet="18 BB";oppBet="ALL-IN";
    }
  }
  hero=hero?mapPos(hero):null;opponent=opponent?mapPos(opponent):null;
@@ -258,8 +258,8 @@ function updateTableScene(){
  if(vs&&vs!==hs)vs.classList.add("fish-seat");
  if(heroBet&&hero)setSeatBet(hero,heroBet,"#4386f2");
  if(oppBet&&opponent)setSeatBet(opponent,oppBet,"#f4b942");
- document.getElementById("potAmount").textContent=pot;
- document.getElementById("potLabel").textContent=potLabel;
+ document.getElementById("potAmount").textContent=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"10 BB":"100 BB"):"1.5 BB";
+ document.getElementById("potLabel").textContent=trainingMode==="fish"?(fishStage===0?"BLINDS":"ACTION"):"POT";
 }
 
 function nextHand(){
