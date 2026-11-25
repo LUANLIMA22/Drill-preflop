@@ -235,8 +235,8 @@ function updateTableScene(){
    if((m=name.match(/^RFI\s+(UTG|MP|CO|BTN|SB)\b/))){
      hero=m[1];heroBet=null; // no opponent action in an RFI spot
    } else if((m=name.match(/^3B\s+(HJ|CO|BTN|SB|MP)V(UTG|HJ|CO|BTN|MP)\b/))){
-     // Hero 3-bet; opponent was opener.
-     hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="2.3 BB";
+     // Pre-decision 3Bet spot: opponent open is visible; Hero's 3Bet is NOT placed yet.
+     hero=m[1];opponent=m[2];heroBet=null;oppBet="2.3 BB";
    } else if((m=name.match(/^(BB|SB|HJ|CO|BTN|MP)V(UTG|HJ|CO|BTN|MP|SB)\b/))){
      // Hero is defending vs an open raise.
      hero=m[1];opponent=m[2];oppBet="2.3 BB";
