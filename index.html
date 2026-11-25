@@ -232,19 +232,19 @@ function updateTableScene(){
    if(fishStage>=1){heroBet="2.3 BB";oppBet="7 BB";}
    if(fishStage>=2){heroBet="18 BB";oppBet="ALL-IN";}
  }else{
-   // Parse imported GTO spot labels: RFI, 3Bet, BB-v-open, vs 3Bet, vs 4Bet and vs JAM.
+   // Case-insensitive matching: names are uppercased above, including the "v" separator.
    let m;
-   if((m=name.match(/^RFI\s+(UTG|MP|CO|BTN|SB)\b/))){
+   if((m=name.match(/^RFI\s+(UTG|MP|CO|BTN|SB)\b/i))){
      hero=m[1];heroBet="2.3 BB";
-   }else if((m=name.match(/^3B\s+(HJ|CO|BTN|SB|MP)v(UTG|HJ|CO|BTN|MP)\b/))){
+   }else if((m=name.match(/^3B\s+(HJ|CO|BTN|SB|MP)v(UTG|HJ|CO|BTN|MP)\b/i))){
      hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="2.3 BB";
-   }else if((m=name.match(/^(BB|SB|HJ|CO|BTN|MP)v(UTG|HJ|CO|BTN|MP)\b/))){
+   }else if((m=name.match(/^(BB|SB|HJ|CO|BTN|MP)v(UTG|HJ|CO|BTN|MP)\b/i))){
      hero=m[1];opponent=m[2];oppBet="2.3 BB";
-   }else if((m=name.match(/^(UTG|MP|CO|BTN|SB|HJ)v3B\s+(HJ|CO|BTN|SB|BB)\b/))){
+   }else if((m=name.match(/^(UTG|MP|CO|BTN|SB|HJ)v3B\s+(HJ|CO|BTN|SB|BB)\b/i))){
      hero=m[1];opponent=m[2];heroBet="2.3 BB";oppBet="7 BB";
-   }else if((m=name.match(/^(HJ|CO|BTN|SB|BB)v4B\s+(UTG|HJ|CO|BTN|SB|MP)\b/))){
+   }else if((m=name.match(/^(HJ|CO|BTN|SB|BB)v4B\s+(UTG|HJ|CO|BTN|SB|MP)\b/i))){
      hero=m[1];opponent=m[2];heroBet="7 BB";oppBet="18 BB";
-   }else if((m=name.match(/^(UTG|HJ|CO|BTN|SB)vJAM\s+(HJ|CO|BTN|SB|BB)\b/))){
+   }else if((m=name.match(/^(UTG|HJ|CO|BTN|SB)vJAM\s+(HJ|CO|BTN|SB|BB)\b/i))){
      hero=m[1];opponent=m[2];heroBet="2.3 BB";oppBet="ALL-IN";
    }
  }
@@ -252,7 +252,7 @@ function updateTableScene(){
  const hs=hero?document.querySelector(`#tableScene .seat[data-seat="${hero}"]`):null;
  if(hs)hs.classList.add("hero-seat");
  const vs=opponent?document.querySelector(`#tableScene .seat[data-seat="${opponent}"]`):null;
- if(vs&&vs!==hs)vs.classList.add(trainingMode==="fish"?"fish-seat":"fish-seat");
+ if(vs&&vs!==hs)vs.classList.add("fish-seat");
  if(heroBet&&hero)setSeatBet(hero,heroBet,"#4386f2");
  if(oppBet&&opponent)setSeatBet(opponent,oppBet,"#f4b942");
  document.getElementById("potAmount").textContent=trainingMode==="fish"?(fishStage===0?"1.5 BB":fishStage===1?"10 BB":"100 BB"):"1.5 BB";
